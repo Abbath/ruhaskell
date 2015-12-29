@@ -1,6 +1,6 @@
 {-
     Модуль, отвечающий за формирование базового контекста статей.
-    https://github.com/denisshevchenko/ruhaskell
+    https://github.com/ruHaskell/ruhaskell
     Все права принадлежат русскоязычному сообществу Haskell-разработчиков, 2015 г.
 -}
 
@@ -10,10 +10,9 @@ module Context (
     postContext
 ) where
 
-import Data.Monoid      (mconcat)
 import Data.List        (intersperse)
-import System.Locale    
-import Misc             (aHost, 
+import Data.Time        (TimeLocale(..))
+import Misc             (aHost,
                          TagsAndAuthors,
                          getNameOfAuthor,
                          getRussianNameOfCategory)
@@ -26,7 +25,7 @@ import           Text.Blaze.Html                (toHtml, toValue, (!))
 import Hakyll
 
 -- Код данной функции для формирования простой ссылки взят из исходников Hakyll.
-simpleRenderLink :: String 
+simpleRenderLink :: String
                  -> Maybe FilePath
                  -> Maybe H.Html
 simpleRenderLink tag = fmap $ \filePath -> -- Формируем тег <a href...>
@@ -37,7 +36,7 @@ authorField :: String -> Tags -> Context a
 authorField = tagsFieldWith getNameOfAuthor simpleRenderLink (mconcat . intersperse ", ")
 
 -- Оборачиваем ссылку-тег в программерские кавычки, чтобы было как в Haskell-коде. ;-)
-simpleRenderQuottedLink :: String 
+simpleRenderQuottedLink :: String
                         -> Maybe FilePath
                         -> Maybe H.Html
 simpleRenderQuottedLink tag = fmap $ \filePath -> -- Формируем тег <a href...>
@@ -46,13 +45,13 @@ simpleRenderQuottedLink tag = fmap $ \filePath -> -- Формируем тег <
     in quote >> rawHref >> quote
 
 -- Превращает имя ссылки в ссылку, ведущую к списку статей данного автора.
-quottedTagField :: String 
-                -> Tags 
+quottedTagField :: String
+                -> Tags
                 -> Context a
 quottedTagField = tagsFieldWith getTags simpleRenderQuottedLink (mconcat . intersperse ", ")
 
 -- Формируем ссылку, конвертируя "родное файловое" имя категории в русскоязычный аналог...
-simpleRenderLinkForRussianCategory :: String 
+simpleRenderLinkForRussianCategory :: String
                                    -> Maybe FilePath
                                    -> Maybe H.Html
 simpleRenderLinkForRussianCategory tag = fmap $ \filePath ->
@@ -76,9 +75,9 @@ ruTimeLocale =  TimeLocale { wDays  = []
                                        ("июля",     "jul"),  ("августа", "aug"),
                                        ("сентября", "sep"),  ("октября", "oct"),
                                        ("ноября",   "nov"),  ("декабря", "dec")]
-                           , intervals = []
+                           , knownTimeZones = []
                            , amPm = ("", "")
-                           , dateTimeFmt = "" 
+                           , dateTimeFmt = ""
                            , dateFmt = ""
                            , timeFmt = ""
                            , time12Fmt = ""
@@ -89,9 +88,9 @@ postContext :: TagsAndAuthors -> Context String
 postContext tagsAndAuthors = mconcat [ constField "host" aHost
                                      , dateFieldWith ruTimeLocale "date" "%d %B %Y"
                                      , dateFieldWith ruTimeLocale "haskellDate" "%Y %b %d"
+                                     , dateField "issuePubDateInRFC2822" "%a, %_d %b %Y %H:%M:%S +0300"
                                      , quottedTagField "postTags" $ head tagsAndAuthors
                                      , categoryFieldInRussian "postCategory" $ tagsAndAuthors !! 1
                                      , authorField "postAuthor" $ tagsAndAuthors !! 2
                                      , defaultContext
                                      ]
-

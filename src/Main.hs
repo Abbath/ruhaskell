@@ -1,6 +1,6 @@
 {-
     Главный модуль.
-    https://github.com/denisshevchenko/ruhaskell
+    https://github.com/ruHaskell/ruhaskell
     Все права принадлежат русскоязычному сообществу Haskell-разработчиков, 2015 г.
 -}
 
@@ -9,7 +9,7 @@
 module Main where
 
 import Copiers              (justCopy, justCreateAndCopy, justCompressAndCopy)
-import RSSFeed              (setupRSSFeed)
+import RSSFeed              (setupRSSFeed, setupITunesRSSFeed)
 import Posts                (createPosts)
 import Tags                 (createPageWithAllTags,
                              createPageWithAllCategories,
@@ -31,17 +31,18 @@ import Hakyll
 
 main :: IO ()
 main = hakyll $ do
+    justCopy            "files/**"
     justCopy            "static/images/*"
     justCompressAndCopy "static/css/*"
     justCopy            "README.md"
     justCopy            "CNAME"
     justCreateAndCopy   ".nojekyll"
-    
+
     prepareAllTemplates
-    
+
     -- Извлекаем названия тегов, категорий, а также имена авторов из всех публикаций.
     tags        <- buildPostsTags
-    categories  <- buildPostsCategories 
+    categories  <- buildPostsCategories
     authors     <- buildPostsAuthors
 
     -- Теги и имена авторов нужны всем, поэтому для удобства запускаем читателя.
@@ -55,7 +56,8 @@ main = hakyll $ do
                 >> convertAuthorsToLinks
                 >> createXMLMap
                 >> setupRSSFeed
+                >> setupITunesRSSFeed
                 >> createIndexPage
-		>> createMailingListFrontend
+                >> createMailingListFrontend
                 >> createPageWithExternalLinks) [tags, categories, authors]
 

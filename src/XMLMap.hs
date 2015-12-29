@@ -1,6 +1,6 @@
 {-
     Модуль, отвечающий за построение XML-карты сайта.
-    https://github.com/denisshevchenko/ruhaskell
+    https://github.com/ruHaskell/ruhaskell
     Все права принадлежат русскоязычному сообществу Haskell-разработчиков, 2015 г.
 -}
 
@@ -10,7 +10,6 @@ module XMLMap (
     createXMLMap
 ) where
 
-import Data.Monoid          (mconcat)
 import Context              (postContext)
 import Misc                 (aHost, TagsReader)
 import Control.Monad.Reader
@@ -30,4 +29,3 @@ createXMLMap = do
             -- Формируем страницу sitemap.xml, применяя к ней шаблон и контекст.
             makeItem "" >>= loadAndApplyTemplate "templates/sitemap.xml" sitemapContext
     return ()
-

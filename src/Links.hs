@@ -1,6 +1,6 @@
 {-
-    Модуль, отвечающий за формирование страницы со ссылками на сторонние ресурсы. 
-    https://github.com/denisshevchenko/ruhaskell
+    Модуль, отвечающий за формирование страницы со ссылками на сторонние ресурсы.
+    https://github.com/ruHaskell/ruhaskell
     Все права принадлежат русскоязычному сообществу Haskell-разработчиков, 2015 г.
 -}
 
@@ -10,7 +10,6 @@ module Links (
     createPageWithExternalLinks
 ) where
 
-import Data.Monoid          (mconcat)
 import Misc                 (TagsReader)
 import Control.Monad.Reader
 import Hakyll
@@ -30,4 +29,3 @@ createPageWithExternalLinks = do
                         >>= loadAndApplyTemplate "templates/default.html" linksContext
                         >>= relativizeUrls
     return ()
-
